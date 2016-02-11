@@ -1,0 +1,91 @@
+---
+
+- name: install packages
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  with_flattened:
+    - server_packages
+    - "['exim4-daemon-light', 'monit']"
+
+- name: configure ssh
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "{{ item.regex }}"
+    line: "{{ item.replace }}"
+    state: present
+  with_items:
+    -
+      regex: "^PermitRootLogin"
+      replace: "PermitRootLogin no"
+    -
+      regex: "^#?PasswordAuthentication"
+      replace: "PasswordAuthentication no"
+    -
+      regex: "^Port"
+      replace: "Port {{ server_ssh_port }}"
+  notify:
+    - restart ssh
+
+- name: set .ssh folder permissions
+  file:
+    path: /root/.ssh
+    state: directory
+    mode: "0700"
+
+- name: apply firewall rules
+  ufw:
+    rule: allow
+    proto: tcp
+    port: "{{ server_ssh_port }}"
+    src: "any"
+
+- name: enable firewall rules
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: apply exim4 configuration
+  template:
+    src: update-exim4.conf.conf.j2
+    dest: /etc/exim4/update-exim4.conf.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart exim4
+
+- name: apply monit configuration
+  template:
+    src: monitrc.j2
+    dest: /etc/monit/monitrc
+    owner: root
+    group: root
+    mode: "0600"
+  notify:
+    - restart monit
+
+- name: apply monit configuration for services
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/monit/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart monit
+  with_items:
+    - cron
+    - rsyslog
+    - ssh
+
+- name: start packages with configuration
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - exim4
+    - monit

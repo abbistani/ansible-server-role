@@ -1,0 +1,20 @@
+---
+
+server_packages:
+  - curl
+  - fail2ban
+  - htop
+  - vim
+
+server_ssh_port: "22"
+
+server_monit_alerts: false
+server_monit_alerts_services_only: false
+server_monit_user: monit
+server_monit_pass: monit
+server_monit_alert_email:
+server_monit_load_avg1: 8
+server_monit_load_avg5: 4
+server_monit_load_memory: 85%
+server_monit_load_swap: 45%
+server_monit_disk_usage: 80%
