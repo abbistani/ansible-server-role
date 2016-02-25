@@ -18,6 +18,9 @@
     state: present
   with_items:
     -
+      regex: "^#?ChallengeResponseAuthentication"
+      replace: "ChallengeResponseAuthentication no"
+    -
       regex: "^PermitRootLogin"
       replace: "PermitRootLogin no"
     -
