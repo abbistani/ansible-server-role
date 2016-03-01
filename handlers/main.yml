@@ -1,13 +1,13 @@
 ---
 
 - name: restart exim4
-  sudo: yes
+  become: yes
   service:
     name: exim4
     state: restarted
 
 - name: restart monit
-  sudo: yes
+  become: yes
   service:
     name: monit
     state: restarted
