@@ -1,5 +1,5 @@
 #!/bin/sh
-recepient="{{ ssh_email_to }}"
+recepient="{{ server_login_alert_email }}"
 
 if [ "$PAM_TYPE" != "close_session" ]; then
     host="`hostname`"
