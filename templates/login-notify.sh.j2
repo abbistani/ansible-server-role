@@ -1,0 +1,10 @@
+#!/bin/sh
+recepient="{{ ssh_email_to }}"
+
+if [ "$PAM_TYPE" != "close_session" ]; then
+    host="`hostname`"
+    subject="SSH Login: $PAM_USER from $PAM_RHOST on $host"
+    message="`env`"
+    echo "$message" | mailx -s "$subject" "$recepient"
+fi
+
