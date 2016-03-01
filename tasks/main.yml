@@ -10,20 +10,22 @@
     - server_packages
     - "['exim4-daemon-light', 'monit']"
 
-- name: require ssh login-notify.sh script in pam.d/sshd
-  lineinfile:
-    dest=/etc/pam.d/sshd
-    regexp=''
-    insertafter=EOF
-    line="session optional pam_exec.so seteuid /etc/ssh/login-notify.sh"
-
 - name: drop in login-notify for ssh
   template:
-    src=login-notify.sh.j2
-    dest=/etc/ssh/login-notify.sh
-    owner=root
-    group=root
-    mode=0755
+    src: login-notify.sh.j2
+    dest: /etc/ssh/login-notify.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: require ssh login-notify.sh script in pam.d/sshd
+  lineinfile:
+    dest: /etc/pam.d/sshd
+    regexp: ''
+    insertafter: EOF
+    line: "session optional pam_exec.so seteuid /etc/ssh/login-notify.sh"
+  notify:
+    - restart ssh
 
 - name: configure ssh
   lineinfile:
