@@ -52,8 +52,6 @@
     -
       regex: "^Port"
       replace: "Port {{ server_ssh_port }}"
-    -
-
   notify:
     - restart ssh
   tags:
