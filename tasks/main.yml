@@ -9,6 +9,8 @@
   with_flattened:
     - server_packages
     - "['exim4-daemon-light', 'monit']"
+  tags:
+    - server
 
 - name: drop in login-notify for ssh
   template:
@@ -17,6 +19,8 @@
     owner: root
     group: root
     mode: 0755
+  tags:
+    - server
 
 - name: require ssh login-notify.sh script in pam.d/sshd
   lineinfile:
@@ -26,6 +30,8 @@
     line: "session optional pam_exec.so seteuid /etc/ssh/login-notify.sh"
   notify:
     - restart ssh
+  tags:
+    - server
 
 - name: configure ssh
   lineinfile:
@@ -50,12 +56,16 @@
 
   notify:
     - restart ssh
+  tags:
+    - server
 
 - name: set .ssh folder permissions
   file:
     path: /root/.ssh
     state: directory
     mode: "0700"
+  tags:
+    - server
 
 - name: apply firewall rules
   ufw:
@@ -63,11 +73,15 @@
     proto: tcp
     port: "{{ server_ssh_port }}"
     src: "any"
+  tags:
+    - server
 
 - name: enable firewall rules
   ufw:
     state: enabled
     policy: deny
+  tags:
+    - server
 
 - name: apply exim4 configuration
   template:
@@ -78,6 +92,8 @@
     mode: "0644"
   notify:
     - restart exim4
+  tags:
+    - server
 
 - name: apply monit configuration
   template:
@@ -88,6 +104,8 @@
     mode: "0600"
   notify:
     - restart monit
+  tags:
+    - server
 
 - name: apply monit configuration for services
   template:
@@ -102,6 +120,8 @@
     - cron
     - rsyslog
     - ssh
+  tags:
+    - server
 
 - name: start packages with configuration
   service:
@@ -111,3 +131,6 @@
   with_items:
     - exim4
     - monit
+  tags:
+    - server
+
