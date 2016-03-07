@@ -7,8 +7,8 @@
     update_cache: yes
     cache_valid_time: 3600
   with_flattened:
-    - server_packages
-    - "['exim4-daemon-light', 'monit']"
+    - "{{ server_packages }}"
+    - ['exim4-daemon-light', 'monit']
   tags:
     - server
 
