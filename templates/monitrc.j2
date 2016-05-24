@@ -2,7 +2,7 @@ set daemon 120
 set logfile /var/log/monit.log
 set idfile /var/lib/monit/id
 set statefile /var/lib/monit/state
-{% if server_monit_alerts and server_monit_alert_email %}
+{% if server_monit_alerts|bool and server_monit_alert_email %}
 set mailserver localhost
 set mail-format { from: monit@{{ ansible_fqdn }} }
 set alert {{ server_monit_alert_email }}
@@ -21,13 +21,13 @@ check system localhost
   if loadavg (5min) > {{ server_monit_load_avg5 }} then alert
   if memory usage > {{ server_monit_load_memory }} then alert
   if swap usage > {{ server_monit_load_swap }} then alert
-  {% if server_monit_alerts_services_only and server_monit_alert_email %}
+  {% if server_monit_alerts_services_only|bool and server_monit_alert_email %}
   noalert {{ server_monit_alert_email }}
   {% endif %}
 
 check filesystem root with path /
   if space usage > {{ server_monit_disk_usage }} for 5 cycles then alert
-  {% if server_monit_alerts_services_only and server_monit_alert_email %}
+  {% if server_monit_alerts_services_only|bool and server_monit_alert_email %}
   noalert {{ server_monit_alert_email }}
   {% endif %}
 
