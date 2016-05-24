@@ -92,6 +92,8 @@
     - restart exim4
   tags:
     - server
+    - server_exim4
+    - exim4
 
 - name: apply monit configuration
   template:
@@ -104,6 +106,8 @@
     - restart monit
   tags:
     - server
+    - server_monit
+    - monit
 
 - name: apply monit configuration for services
   template:
@@ -120,6 +124,8 @@
     - ssh
   tags:
     - server
+    - server_monit
+    - monit
 
 - name: start packages with configuration
   service:
@@ -131,4 +137,7 @@
     - monit
   tags:
     - server
-
+    - server_exim4
+    - server_monit
+    - exim4
+    - monit
